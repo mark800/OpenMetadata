@@ -188,9 +188,12 @@ public class GlossaryResourceTest extends EntityResourceTest<Glossary, CreateGlo
     // Create a table with all the terms as tag labels
     TableResourceTest tableResourceTest = new TableResourceTest();
     List<TagLabel> tagLabels = toTagLabels(t1, t11, t12, t2, t21, t22);
-    Column column = new Column().withName("c1").withDataType(ColumnDataType.INT).withTags(tagLabels);
+    Column column = new Column().withName(C1).withDataType(ColumnDataType.INT).withTags(tagLabels);
     CreateTable createTable =
-        tableResourceTest.createRequest(getEntityName(test)).withTags(tagLabels).withColumns(listOf(column));
+        tableResourceTest
+            .createRequest(tableResourceTest.getEntityName(test))
+            .withTags(tagLabels)
+            .withColumns(listOf(column));
     Table table = tableResourceTest.createEntity(createTable, ADMIN_AUTH_HEADERS);
 
     //
@@ -224,30 +227,33 @@ public class GlossaryResourceTest extends EntityResourceTest<Glossary, CreateGlo
     //    -> t2 -> t21 -> t211
     //
     // h  -> h1 -> h11 -> h111
-    Glossary g = createEntity(createRequest("changeParent_g"), ADMIN_AUTH_HEADERS);
-    Glossary h = createEntity(createRequest("changeParent_h"), ADMIN_AUTH_HEADERS);
+    Glossary g = createEntity(createRequest("changeParent'_g"), ADMIN_AUTH_HEADERS);
+    Glossary h = createEntity(createRequest("changeParent'_h"), ADMIN_AUTH_HEADERS);
 
     GlossaryTermResourceTest glossaryTermResourceTest = new GlossaryTermResourceTest();
-    GlossaryTerm t1 = createGlossaryTerm(glossaryTermResourceTest, g, null, "t1");
-    GlossaryTerm t11 = createGlossaryTerm(glossaryTermResourceTest, g, t1, "t11");
-    GlossaryTerm t111 = createGlossaryTerm(glossaryTermResourceTest, g, t11, "t111");
-    GlossaryTerm t12 = createGlossaryTerm(glossaryTermResourceTest, g, t1, "t12");
-    GlossaryTerm t121 = createGlossaryTerm(glossaryTermResourceTest, g, t12, "t121");
-    GlossaryTerm t13 = createGlossaryTerm(glossaryTermResourceTest, g, t1, "t13");
-    GlossaryTerm t131 = createGlossaryTerm(glossaryTermResourceTest, g, t13, "t131");
-    GlossaryTerm t2 = createGlossaryTerm(glossaryTermResourceTest, g, null, "t2");
-    GlossaryTerm t21 = createGlossaryTerm(glossaryTermResourceTest, g, t2, "t21");
-    GlossaryTerm t211 = createGlossaryTerm(glossaryTermResourceTest, g, t21, "t211");
-    GlossaryTerm h1 = createGlossaryTerm(glossaryTermResourceTest, h, null, "h1");
-    GlossaryTerm h11 = createGlossaryTerm(glossaryTermResourceTest, h, h1, "h11");
-    GlossaryTerm h111 = createGlossaryTerm(glossaryTermResourceTest, h, h11, "h111");
+    GlossaryTerm t1 = createGlossaryTerm(glossaryTermResourceTest, g, null, "t'_1");
+    GlossaryTerm t11 = createGlossaryTerm(glossaryTermResourceTest, g, t1, "t'_11");
+    GlossaryTerm t111 = createGlossaryTerm(glossaryTermResourceTest, g, t11, "t'_111");
+    GlossaryTerm t12 = createGlossaryTerm(glossaryTermResourceTest, g, t1, "t'_12");
+    GlossaryTerm t121 = createGlossaryTerm(glossaryTermResourceTest, g, t12, "t'_121");
+    GlossaryTerm t13 = createGlossaryTerm(glossaryTermResourceTest, g, t1, "t'_13");
+    GlossaryTerm t131 = createGlossaryTerm(glossaryTermResourceTest, g, t13, "t'_131");
+    GlossaryTerm t2 = createGlossaryTerm(glossaryTermResourceTest, g, null, "t'_2");
+    GlossaryTerm t21 = createGlossaryTerm(glossaryTermResourceTest, g, t2, "t'_21");
+    GlossaryTerm t211 = createGlossaryTerm(glossaryTermResourceTest, g, t21, "t'_211");
+    GlossaryTerm h1 = createGlossaryTerm(glossaryTermResourceTest, h, null, "h'_1");
+    GlossaryTerm h11 = createGlossaryTerm(glossaryTermResourceTest, h, h1, "h'_11");
+    GlossaryTerm h111 = createGlossaryTerm(glossaryTermResourceTest, h, h11, "h'_111");
 
     // Create a table with all the terms as tag labels
     TableResourceTest tableResourceTest = new TableResourceTest();
     List<TagLabel> tagLabels = toTagLabels(t1, t11, t111, t12, t121, t13, t131, t2, t21, t211, h1, h11, h111);
-    Column column = new Column().withName("c1").withDataType(ColumnDataType.INT).withTags(tagLabels);
+    Column column = new Column().withName(C1).withDataType(ColumnDataType.INT).withTags(tagLabels);
     CreateTable createTable =
-        tableResourceTest.createRequest(getEntityName(test)).withTags(tagLabels).withColumns(listOf(column));
+        tableResourceTest
+            .createRequest(tableResourceTest.getEntityName(test))
+            .withTags(tagLabels)
+            .withColumns(listOf(column));
     Table table = tableResourceTest.createEntity(createTable, ADMIN_AUTH_HEADERS);
 
     Object[][] scenarios = {
@@ -376,13 +382,13 @@ public class GlossaryResourceTest extends EntityResourceTest<Glossary, CreateGlo
   }
 
   private CsvImportResult importCsv(String glossaryName, String csv, boolean dryRun) throws HttpResponseException {
-    WebTarget target = getResourceByName(glossaryName + "/import");
+    WebTarget target = getResourceByName(glossaryName).path("/import");
     target = !dryRun ? target.queryParam("dryRun", false) : target;
     return TestUtils.putCsv(target, csv, CsvImportResult.class, Status.OK, ADMIN_AUTH_HEADERS);
   }
 
   private String exportCsv(String glossaryName) throws HttpResponseException {
-    WebTarget target = getResourceByName(glossaryName + "/export");
+    WebTarget target = getResourceByName(glossaryName).path("/export");
     return TestUtils.get(target, String.class, ADMIN_AUTH_HEADERS);
   }
 
