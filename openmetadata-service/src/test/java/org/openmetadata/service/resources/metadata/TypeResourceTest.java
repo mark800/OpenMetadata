@@ -60,8 +60,7 @@ public class TypeResourceTest extends EntityResourceTest<Type, CreateType> {
     super(Entity.TYPE, Type.class, TypeList.class, "metadata/types", TypeResource.PROPERTIES);
     supportsEmptyDescription = false;
     supportsFieldsQueryParam = false;
-    // Special characters are not supported in the name
-    supportedNameCharacters = supportedNameCharacters.replaceAll("[ ':&/.]", "");
+    supportedNameCharacters = "_"; // No other special characters allowed
   }
 
   public void setupTypes() throws HttpResponseException {
@@ -209,13 +208,17 @@ public class TypeResourceTest extends EntityResourceTest<Type, CreateType> {
   @Override
   public void validateCreatedEntity(Type createdEntity, CreateType createRequest, Map<String, String> authHeaders) {
     assertEquals(createRequest.getSchema(), createdEntity.getSchema());
-    // TODO
+    assertEquals(createRequest.getCategory(), createdEntity.getCategory());
+    assertEquals(createRequest.getNameSpace(), createdEntity.getNameSpace());
   }
 
   @Override
   public void compareEntities(Type expected, Type patched, Map<String, String> authHeaders) {
     assertEquals(expected.getSchema(), patched.getSchema());
-    // TODO more checks
+    assertEquals(expected.getSchema(), patched.getSchema());
+    assertEquals(expected.getCategory(), patched.getCategory());
+    assertEquals(expected.getNameSpace(), patched.getNameSpace());
+    assertEquals(expected.getCustomProperties(), patched.getCustomProperties());
   }
 
   @Override
